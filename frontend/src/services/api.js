@@ -34,4 +34,18 @@ export const getAuditLogs = () => api.get('/audit/logs');
 export const getAccessAlerts = () => api.get('/audit/access');
 export const getExportLogs = () => api.get('/audit/exports');
 
+// ML Analysis & Anomaly Detection
+export const runAnalysis = () => api.post('/analyze');
+export const getMLAnomalies = (page = 1, perPage = 25, reviewed = null) => {
+    const params = { page, per_page: perPage };
+    if (reviewed !== null) params.reviewed = reviewed;
+    return api.get('/anomalies', { params });
+};
+export const patchAnomalyReviewed = (id) => api.patch(`/anomalies/${id}`);
+export const getAnomalyStats = () => api.get('/anomalies/stats');
+
+// AI Insights
+export const generateInsights = () => api.post('/insights/generate');
+export const getInsights = () => api.get('/insights');
+
 export default api;

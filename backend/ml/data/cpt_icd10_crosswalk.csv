@@ -1,0 +1,81 @@
+cpt_code,icd10_code,description,category
+99213,Z00.00,Encounter for general adult medical examination,Office Visit
+99213,J06.9,Acute upper respiratory infection unspecified,Office Visit
+99213,R10.9,Unspecified abdominal pain,Office Visit
+99213,M54.5,Low back pain,Office Visit
+99213,J02.9,Acute pharyngitis unspecified,Office Visit
+99213,R51.9,Headache unspecified,Office Visit
+99214,E11.9,Type 2 diabetes mellitus without complications,Office Visit
+99214,I10,Essential primary hypertension,Office Visit
+99214,J44.1,COPD with acute exacerbation,Office Visit
+99214,M79.3,Panniculitis unspecified,Office Visit
+99214,E78.5,Hyperlipidemia unspecified,Office Visit
+99214,K21.0,GERD with esophagitis,Office Visit
+99215,E11.65,Type 2 DM with hyperglycemia,Office Visit
+99215,I25.10,Atherosclerotic heart disease of native coronary artery,Office Visit
+99215,C34.90,Malignant neoplasm unspecified part of bronchus or lung,Office Visit
+99215,G43.909,Migraine unspecified not intractable without status migrainosus,Office Visit
+99203,Z00.00,Encounter for general adult medical examination,Office Visit New
+99203,J20.9,Acute bronchitis unspecified,Office Visit New
+99203,R05.9,Cough unspecified,Office Visit New
+99204,E78.5,Hyperlipidemia unspecified,Office Visit New
+99204,I10,Essential primary hypertension,Office Visit New
+99204,J45.20,Mild intermittent asthma uncomplicated,Office Visit New
+99385,Z00.00,Encounter for general adult medical examination,Preventive
+99385,Z23,Encounter for immunization,Preventive
+99395,Z00.00,Encounter for general adult medical examination,Preventive
+99395,Z23,Encounter for immunization,Preventive
+99395,Z12.31,Encounter for screening mammogram for malignant neoplasm of breast,Preventive
+90834,F32.1,Major depressive disorder single episode moderate,Behavioral Health
+90834,F41.1,Generalized anxiety disorder,Behavioral Health
+90834,F43.10,Post-traumatic stress disorder unspecified,Behavioral Health
+90834,F33.0,Major depressive disorder recurrent mild,Behavioral Health
+90837,F33.1,Major depressive disorder recurrent moderate,Behavioral Health
+90837,F41.0,Panic disorder without agoraphobia,Behavioral Health
+90837,F43.12,Post-traumatic stress disorder chronic,Behavioral Health
+90837,F32.9,Major depressive disorder single episode unspecified,Behavioral Health
+71046,J18.9,Pneumonia unspecified organism,Radiology
+71046,R05.9,Cough unspecified,Radiology
+71046,J44.1,COPD with acute exacerbation,Radiology
+71046,R91.1,Solitary pulmonary nodule,Radiology
+71046,J96.01,Acute respiratory failure with hypoxia,Radiology
+73721,M23.50,Derangement of unspecified meniscus due to old tear or injury unspecified knee,Radiology
+73721,M25.561,Pain in right knee,Radiology
+73721,S83.511A,Sprain of ACL right knee initial encounter,Radiology
+73721,M76.891,Other enthesopathies of right lower limb excluding foot,Radiology
+73560,M17.11,Primary osteoarthritis right knee,Radiology
+73560,M25.561,Pain in right knee,Radiology
+73560,S82.001A,Unspecified fracture of right patella initial encounter for closed fracture,Radiology
+80053,E11.9,Type 2 diabetes mellitus without complications,Laboratory
+80053,E78.5,Hyperlipidemia unspecified,Laboratory
+80053,N18.3,Chronic kidney disease stage 3 unspecified,Laboratory
+80053,Z00.00,Encounter for general adult medical examination,Laboratory
+80053,E87.6,Hypokalemia,Laboratory
+85025,D64.9,Anemia unspecified,Laboratory
+85025,Z00.00,Encounter for general adult medical examination,Laboratory
+85025,R79.89,Other specified abnormal findings of blood chemistry,Laboratory
+85025,D50.9,Iron deficiency anemia unspecified,Laboratory
+36415,Z00.00,Encounter for general adult medical examination,Laboratory
+36415,E11.9,Type 2 diabetes mellitus without complications,Laboratory
+36415,D64.9,Anemia unspecified,Laboratory
+97110,M54.5,Low back pain,Physical Therapy
+97110,M25.511,Pain in right shoulder,Physical Therapy
+97110,S43.401A,Unspecified sprain of right shoulder initial encounter,Physical Therapy
+97110,M62.830,Muscle spasm of back,Physical Therapy
+97140,M54.5,Low back pain,Physical Therapy
+97140,M62.830,Muscle spasm of back,Physical Therapy
+97140,M79.3,Panniculitis unspecified,Physical Therapy
+97140,M25.511,Pain in right shoulder,Physical Therapy
+99232,J18.9,Pneumonia unspecified organism,Inpatient
+99232,I50.9,Heart failure unspecified,Inpatient
+99232,N17.9,Acute kidney failure unspecified,Inpatient
+99232,K92.1,Melena,Inpatient
+99233,I21.3,ST elevation MI of unspecified site,Inpatient
+99233,J96.01,Acute respiratory failure with hypoxia,Inpatient
+99233,A41.9,Sepsis unspecified organism,Inpatient
+99233,I50.9,Heart failure unspecified,Inpatient
+99291,J96.01,Acute respiratory failure with hypoxia,Critical Care
+99291,I46.9,Cardiac arrest cause unspecified,Critical Care
+99291,A41.9,Sepsis unspecified organism,Critical Care
+99291,R57.1,Hypovolemic shock,Critical Care
+99291,I21.3,ST elevation MI of unspecified site,Critical Care

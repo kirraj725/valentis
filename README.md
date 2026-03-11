@@ -4,6 +4,66 @@
 
 Valentis is a predictive revenue intelligence and fraud detection layer that helps hospitals proactively protect revenue, detect suspicious financial activity, and optimize collections before accounts reach bad debt.
 
+## Architecture
+
+```mermaid
+graph TD
+    subgraph Frontend
+        A[React Dashboard] --> B[Claims Overview]
+        A --> C[Flagged Claims Table]
+        A --> D[AI Insights Panel]
+    end
+
+    subgraph Backend API
+        E[POST /api/ingest] --> F[(PostgreSQL)]
+        G[POST /api/analyze] --> H[Three-Layer Detection]
+        I[POST /api/insights/generate] --> J[Anthropic Claude]
+        K[GET /metrics] --> L[Prometheus]
+    end
+
+    subgraph ML Pipeline
+        H --> M[Layer 1: Rule-Based]
+        H --> N[Layer 2: Per-CPT Isolation Forest]
+        H --> O[Layer 3: Provider Z-Score]
+        M --> P[Duplicates + CMS Crosswalk]
+        N --> Q[Amount Outliers]
+        O --> R[Behavioral Patterns]
+    end
+
+    B --> G
+    C --> G
+    D --> I
+    H --> F
+```
+
+## Anomaly Detection — Three-Layer Architecture
+
+| Layer | Method | What it catches | Why this approach |
+|---|---|---|---|
+| **Layer 1** | Rule-based (deterministic) | Duplicate claims, CPT/ICD-10 mismatches | No ML needed — duplicates are a lookup, mismatches are a crosswalk join against CMS reference data |
+| **Layer 2** | Per-CPT Isolation Forest | Amount outliers by procedure code | Trained per CPT group because $800 is normal for an MRI but suspicious for a blood draw |
+| **Layer 3** | Provider-level Z-score | Behavioral anomalies (volume, billing patterns) | Aggregate patterns that only appear when comparing providers as cohorts |
+
+### Performance on 50K Synthetic Dataset
+
+| Metric | Value |
+|---|---|
+| **Precision** | **90.67%** |
+| **Recall** | **98.00%** |
+| **F1 Score** | **94.19%** |
+| Total claims | 50,000 |
+| Ground truth anomalies | 3,152 (6.3%) |
+| Predicted anomalies | 3,407 |
+
+The LLM summarization layer (Anthropic Claude) generates plain-English provider analysis grouped by anomaly patterns. This is advisory only — all responses are marked as AI-generated insights for human review, not automated decisions. The batching logic groups anomalies by provider (top 20), summarizes each batch independently, and caps at 50 claims per prompt to manage context.
+
+### Technical Decisions
+
+- **Why Isolation Forest?** Unsupervised learning fits billing anomaly detection well — you rarely have labeled fraud data in production. Training one model per CPT code captures domain-specific amount distributions rather than treating all procedures as identical.
+- **Why batch LLM calls by provider?** Dumping 500 flagged claims into one prompt exceeds useful context. Provider-level grouping produces targeted, actionable summaries.
+- **Why the reviewed status workflow?** It makes the difference between a demo and a product. Persisting review state to the database creates an audit trail and lets teams track resolution progress.
+- **CMS crosswalk reference data** is included as a seed file (`ml/data/cpt_icd10_crosswalk.csv`) so the mismatch detection uses actual clinical coding rules, not synthetic logic.
+
 ## Tech Stack
 
 | Layer        | Technology                                    |
@@ -11,7 +71,8 @@ Valentis is a predictive revenue intelligence and fraud detection layer that hel
 | **Frontend** | React 18, Vite, Recharts, React Router        |
 | **Backend**  | Python, FastAPI, Pandas, NumPy, Scikit-learn   |
 | **Database** | PostgreSQL (production) / SQLite (local dev)   |
-| **ML**       | Logistic Regression, Isolation Forest, Z-score |
+| **ML**       | Isolation Forest (per-CPT), Z-score, Rule engine |
+| **AI**       | Anthropic Claude (advisory summarization)      |
 | **Infra**    | Docker, Docker Compose, Render / Railway       |
 
 ## Quick Start
@@ -19,13 +80,8 @@ Valentis is a predictive revenue intelligence and fraud detection layer that hel
 ### Option 1: Docker (recommended)
 
 ```bash
-# Copy env template and fill in values
 cp .env.example .env
-
-# Generate a secret key
-python -c "import secrets; print(secrets.token_hex(32))"
-
-# Start all services (Postgres + Backend + Frontend)
+python -c "import secrets; print(secrets.token_hex(32))"  # add to .env as SECRET_KEY
 docker compose up --build
 ```
 
@@ -34,113 +90,65 @@ docker compose up --build
 
 ### Option 2: Local Dev
 
-#### Backend
-
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
+# Backend
+cd backend && python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
+
+# Frontend (separate terminal)
+cd frontend && npm install && npm run dev
 ```
 
-API docs available at **http://localhost:8000/docs**
-
-#### Frontend
+## Data Pipeline
 
 ```bash
-cd frontend
-npm install
-npm run dev
-```
+# Generate 50K-row synthetic dataset with 5% anomalies
+cd backend && python scripts/generate_data.py
 
-App available at **http://localhost:5173**
+# Ingest into database
+curl -X POST http://localhost:8000/api/ingest -F 'file=@scripts/claims_data.csv'
+
+# Train model and run detection
+curl -X POST http://localhost:8000/api/analyze
+
+# Generate AI insights
+curl -X POST http://localhost:8000/api/insights/generate
+```
 
 ## Project Structure
 
 ```
 valentis/
 ├── backend/
-│   ├── Dockerfile
+│   ├── ml/
+│   │   ├── anomaly_detector.py   # Three-layer detection engine
+│   │   ├── summarizer.py         # Anthropic LLM summarization
+│   │   └── data/
+│   │       └── cpt_icd10_crosswalk.csv  # CMS reference data
 │   ├── app/
-│   │   ├── routers/      # API endpoints
-│   │   ├── models/       # ML scoring models
-│   │   ├── services/     # Business logic
-│   │   ├── schemas/      # Pydantic schemas
-│   │   ├── db/           # SQLAlchemy ORM + Postgres
-│   │   └── utils/        # Shared utilities
-│   ├── scripts/          # Data generation tools
-│   └── tests/
+│   │   ├── routers/
+│   │   │   ├── analyze.py        # POST /analyze, GET /anomalies
+│   │   │   ├── summarize.py      # POST /insights/generate
+│   │   │   ├── ingest.py         # POST /ingest (bulk CSV)
+│   │   │   └── metrics.py        # GET /metrics (Prometheus)
+│   │   ├── db/models.py          # claims + anomaly_flags tables
+│   │   └── schemas/claims.py
+│   └── scripts/generate_data.py  # Faker-based data generator
 ├── frontend/
-│   ├── Dockerfile
 │   └── src/
-│       ├── components/
 │       ├── pages/
-│       ├── services/
-│       └── utils/
-├── docker-compose.yml    # Postgres + Backend + Frontend
-├── render.yaml           # Render deployment config
-└── data/                 # Synthetic sample data
-    └── sample/
+│       │   ├── ClaimsOverview.jsx    # Stats + run analysis
+│       │   ├── FlaggedClaims.jsx     # Paginated + mark reviewed
+│       │   └── AIInsights.jsx        # Provider summaries
+│       └── services/api.js
+├── docker-compose.yml
+└── render.yaml
 ```
-
-## Data Pipeline
-
-### Generate Synthetic Data
-
-```bash
-cd backend
-python scripts/generate_data.py
-```
-
-Produces a 50K-row billing dataset (`claims_data.csv`) with realistic CPT/ICD-10 pairings and ~5% deliberate anomalies (duplicate claims, amount outliers, code mismatches).
-
-### Ingest into Database
-
-```bash
-curl -X POST http://localhost:8000/api/ingest -F 'file=@scripts/claims_data.csv'
-```
-
-Bulk-inserts validated records via `POST /api/ingest`. Deduplicates against existing data.
-
-## Data Upload
-
-Upload a ZIP file containing:
-- `accounts.csv` (required)
-- `payments.csv` (required)
-- `refunds.csv` (required)
-- `chargebacks.csv` (required)
-- `audit_log.csv` (required)
-- `claims.csv` (optional)
-
-All data must be de-identified. See `data/sample/` for examples.
-
-## Database Schema
-
-| Table | Purpose |
-|---|---|
-| `claims` | Raw billing records (claim_id, CPT, ICD-10, amounts, status) |
-| `anomaly_flags` | Model output — flagged claims with score, reason, and review status |
-| `audit_logs` | User action audit trail |
-| `export_logs` | Data export tracking |
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-```bash
-DATABASE_URL=postgresql://valentis:valentis@localhost:5432/valentis
-SECRET_KEY=<generate-with-python-secrets>
-OPENAI_API_KEY=<your-key>
-ENVIRONMENT=development
-```
-
-> ⚠️ Never commit `.env` files. All secrets are excluded via `.gitignore`.
 
 ## Security
 
-- Designed with HIPAA-aligned principles of data minimization, encryption, and access control
-- De-identified account IDs only — no PHI
-- Role-based access control
+- HIPAA-aligned data minimization — de-identified account IDs only, no PHI
+- Role-based access control with TOTP 2FA
 - Audit logging on all actions
-- Secrets managed via environment variables, never hardcoded
+- Secrets managed via environment variables

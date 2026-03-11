@@ -1429,3 +1429,202 @@ a:hover {
   font-weight: 600;
   color: var(--color-accent);
 }
+
+/* ══════════════════════════════════════════
+   CLAIMS AI — Actions & Results
+   ══════════════════════════════════════════ */
+
+.claims-actions {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.analysis-result__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.analysis-result__grid div {
+  padding: var(--space-4);
+  background: rgba(43, 125, 233, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.analysis-result__grid strong {
+  display: block;
+  font-size: var(--font-size-2xl);
+  color: var(--color-accent);
+  margin-bottom: var(--space-1);
+}
+
+.analysis-result--error {
+  border-color: var(--color-danger) !important;
+}
+
+/* ══════════════════════════════════════════
+   FLAGGED CLAIMS — Filters & Pagination
+   ══════════════════════════════════════════ */
+
+.flagged-filters {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+}
+
+.pagination__info {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Review badges */
+.review-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.review-badge--reviewed {
+  color: var(--color-success);
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.review-badge--pending {
+  color: var(--color-warning);
+  background: rgba(251, 191, 36, 0.12);
+}
+
+/* ══════════════════════════════════════════
+   AI INSIGHTS — Cards & Disclaimer
+   ══════════════════════════════════════════ */
+
+.insight-disclaimer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.insight-disclaimer__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.insight-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--space-6);
+}
+
+.insight-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.insight-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.insight-card__provider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.insight-card__provider-icon {
+  font-size: 1.2rem;
+}
+
+.insight-card__meta {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.insight-card__body {
+  padding: var(--space-5);
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.insight-card__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.insight-card__source {
+  font-weight: 600;
+}
+
+/* Score badges */
+.score-badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.score-badge--critical {
+  color: var(--color-danger);
+  background: rgba(248, 113, 113, 0.15);
+}
+
+.score-badge--warning {
+  color: var(--color-warning);
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.score-badge--low {
+  color: var(--color-success);
+  background: rgba(52, 211, 153, 0.15);
+}

@@ -18,6 +18,9 @@ import Upload from './pages/Upload';
 import CSVViewer from './pages/CSVViewer';
 import PaymentHistory from './pages/PaymentHistory';
 import AuditAlertDetail from './pages/AuditAlertDetail';
+import ClaimsOverview from './pages/ClaimsOverview';
+import FlaggedClaims from './pages/FlaggedClaims';
+import AIInsights from './pages/AIInsights';
 
 function AppContent() {
     const { authStep } = useAuth();
@@ -46,6 +49,9 @@ function AppContent() {
                         <Route path="/accounts/:id" element={<AccountDrillDown />} />
                         <Route path="/plans" element={<PaymentPlans />} />
                         <Route path="/audit" element={<AuditLog />} />
+                        <Route path="/claims" element={<ClaimsOverview />} />
+                        <Route path="/claims/flagged" element={<FlaggedClaims />} />
+                        <Route path="/claims/insights" element={<AIInsights />} />
                         <Route path="/upload" element={<Upload />} />
                         <Route path="/upload/view/:filename" element={<CSVViewer />} />
                         <Route path="/plans/history/:accountId" element={<PaymentHistory />} />
