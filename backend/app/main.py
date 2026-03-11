@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.db.database import engine, Base
+from app.db.models import Claim, AnomalyFlag  # noqa: F401 — ensure models are registered
 from app.routers import upload, risk, fraud, anomaly, forecast, payment_plan, audit, auth, ingest, analyze, summarize, metrics
 
 app = FastAPI(
@@ -15,6 +17,11 @@ app = FastAPI(
     description="Hospital Revenue & Payment Risk Intelligence Platform",
     version="1.0.0",
 )
+
+# Auto-create tables on startup
+@app.on_event("startup")
+def create_tables():
+    Base.metadata.create_all(bind=engine)
 
 # CORS — allow frontend dev server
 app.add_middleware(
